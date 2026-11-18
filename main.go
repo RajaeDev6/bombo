@@ -132,43 +132,81 @@ func openDepth(src string) int {
 	return depth
 }
 
-const helpText = `
-BOMBO: di Jamaican programming language
+const helpText = `Bombo ` + version + ` - a small interpreted programming language
 
-  usage: bombo <file.bombo>     run a program
-         bombo                  start di REPL
+USAGE
+    bombo <file>          Run a Bombo program
+    bombo                 Start the interactive REPL
+    bombo help            Show this help
+    bombo version         Show the version
 
-  KEYWORDS
-    mek x = 5                   declare a variable
-    x = 6   x += 1   x -= 1     change it
-    big up x  /  bun x          x + 1  /  x - 1
-    seh "hello", x              print
-    bombo cond { }              if
-    bomboclaat cond { }         else if
-    bloodclaat { }              else
-    gwaan cond { }              while loop
-    fi i from 1 tuh 10 { }      counting loop (inclusive)
-    fi x inna list { }          for-each loop
-    rassclaat                   break
-    gallang                     continue
-    wuk name(a, b) { }          define a function
-    sen back x                  return
-    tek a chance { }            try
-    if it bruk e { }            catch
-    bruk "message"              throw an error
-    likkle more                 exit di program
-    wah gwaan                   optional greeting (does nothing)
-    watch yah ...  /  # ...     comment
+VARIABLES
+    mek x = 5             Declare a variable
+    x = 6                 Assign
+    x += 1    x -= 1      Compound assignment
+    big up x              Increment (x = x + 1)
+    bun x                 Decrement (x = x - 1)
 
-  VALUES
-    yeh mon / nah mon           true / false
-    kakafaat                    nil / nothing
-    an  or  nuh                 and  or  not
-    [1, 2, 3]   {name: "Bob"}   lists and maps
+OUTPUT
+    seh "hello", x        Print values separated by spaces
 
-  BUILT-IN FUNCTIONS
-    howmuch(x)  pon(list, x)  tekoff(list)  ax("question? ")
-    wahkind(x)  numba(x)  wud(x)  luck(lo, hi)  keys(map)
-    has(c, x)  dash(c, key)  sort(list)  split(s, sep)  join(list, sep)
-    upper(s)  lower(s)  floor ceil round abs sqrt  cool(ms)  time()
+CONTROL FLOW
+    bombo cond { ... }              if
+    bomboclaat cond { ... }         else if
+    bloodclaat { ... }              else
+    gwaan cond { ... }              while
+    fi i from 1 tuh 10 { ... }      Numeric loop (inclusive range)
+    fi item inna list { ... }       Loop over a list, string or map keys
+    rassclaat                       break
+    gallang                         continue
+    likkle more                     Exit the program
+
+FUNCTIONS
+    wuk add(a, b) {                 Define a function
+        sen back a + b              Return a value
+    }
+    add(1, 2)                       Call a function
+
+ERRORS
+    tek a chance { ... }            try
+    if it bruk e { ... }            catch (e holds the error)
+    bruk "message"                  Raise an error
+
+TYPES AND LITERALS
+    42   3.14                       Number
+    "text"   'text'                 String
+    yeh mon   nah mon               Boolean (true / false)
+    kakafaat                        nil
+    [1, 2, 3]                       List
+    {name: "Ann", age: 30}          Map
+
+OPERATORS
+    +  -  *  /  %                   Arithmetic (+ also joins strings and lists)
+    ==  !=  <  <=  >  >=            Comparison
+    an   or   nuh                   Logical and / or / not
+    xs[0]   m["key"]                Indexing
+
+COMMENTS
+    # comment
+    watch yah comment
+
+BUILT-IN FUNCTIONS
+    howmuch(x)        len         Length of a string, list or map
+    pon(list, x...)   push        Append values to a list
+    tekoff(list)      pop         Remove and return the last element
+    ax(prompt)        input       Read a line from standard input
+    wahkind(x)        type        Name of a value's type
+    numba(x)          num         Convert to a number
+    wud(x)            str         Convert to a string
+    luck(lo, hi)      random      Random integer between lo and hi
+    dash(c, key)      remove      Remove a map key or list index; returns the value
+    cool(ms)          sleep       Pause for ms milliseconds
+    keys(map)                     List of a map's keys
+    has(c, x)                     Whether a map, list or string contains x
+    sort(list)                    Sorted copy of a list
+    split(s, sep)                 Split a string into a list
+    join(list, sep)               Join a list into a string
+    upper(s)   lower(s)           Change string case
+    floor  ceil  round  abs  sqrt Math functions
+    time()                        Current time in seconds
 `

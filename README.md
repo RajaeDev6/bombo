@@ -8,14 +8,59 @@ wah gwaan
 seh "Hello, world!"
 ```
 
-## Getting started
+## Installation
+
+### Requirements
+
+- [Go](https://go.dev/dl/) 1.22 or newer
+- Git
+
+### Get the source
+
+```sh
+git clone https://github.com/RajaeDev6/bombo.git
+cd bombo
+```
+
+### Build
 
 ```sh
 go build -o bombo .
-./bombo yourfile.bombo
 ```
 
-Run `./bombo` with no arguments to start the REPL. Type `likkle more` to exit.
+This creates a `bombo` executable (`bombo.exe` on Windows) in the current directory.
+
+### Install system-wide (optional)
+
+To run `bombo` from anywhere, move the binary somewhere on your `PATH`:
+
+```sh
+# Linux / macOS
+sudo mv bombo /usr/local/bin/
+```
+
+On Windows, put `bombo.exe` in a folder that is listed in your `PATH` environment variable.
+
+### Run the tests
+
+```sh
+go test ./...
+```
+
+## Usage
+
+```sh
+bombo yourfile.bombo   # run a program
+bombo                  # start the REPL (type 'likkle more' to exit)
+bombo help             # language reference
+bombo version          # show the version
+```
+
+Try one of the examples:
+
+```sh
+bombo examples/hello.bombo
+```
 
 ## Keywords
 
