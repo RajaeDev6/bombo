@@ -1,0 +1,28 @@
+# Guessing game, run it an play!
+
+wah gwaan
+mek secret = luck(1, 100)
+mek tries = 0
+seh "Mi a tink of a numba between 1 an 100..."
+
+gwaan yeh mon {
+    mek answer = ax("Yuh guess: ")
+    bombo answer == kakafaat {
+        seh "\nAlright, likkle more. It was", secret
+        likkle more
+    }
+    mek guess = numba(answer)
+    bombo guess == kakafaat {
+        seh "Dat a nuh numba, bredda!"
+        gallang
+    }
+    big up tries
+    bombo guess < secret {
+        seh "Too low, go higher!"
+    } bomboclaat guess > secret {
+        seh "Too high, come down!"
+    } bloodclaat {
+        seh "BOMBOCLAAT! Yuh get it inna", tries, "tries!"
+        rassclaat
+    }
+}

@@ -1,0 +1,29 @@
+# Lists an maps
+
+mek fruits = ["ackee", "breadfruit", "mango"]
+pon(fruits, "june plum")
+seh "Mi have", howmuch(fruits), "fruit:", fruits
+seh "Di first one a", fruits[0], "an di last one a", fruits[-1]
+
+fi f inna fruits {
+    bombo f == "breadfruit" {
+        gallang
+    }
+    seh " -", upper(f)
+}
+
+mek yaad = {
+    parish: "St. Andrew",
+    food: "curry goat",
+    people: 4
+}
+yaad["drink"] = "sorrel"
+big up yaad["people"]
+
+fi k inna keys(yaad) {
+    seh k, "=>", yaad[k]
+}
+
+seh "Is dere ackee?", has(fruits, "ackee")
+seh "Sorted:", sort([5, 3, 9, 1])
+seh "Nothing here:", yaad["money"]

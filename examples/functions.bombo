@@ -1,0 +1,37 @@
+# Functions (wuk), recursion and closures
+
+wuk fib(n) {
+    bombo n < 2 {
+        sen back n
+    }
+    sen back fib(n - 1) + fib(n - 2)
+}
+
+fi i from 0 tuh 10 {
+    seh "fib(" + i + ") =", fib(i)
+}
+
+# a function dat mek another function
+wuk counter() {
+    mek count = 0
+    sen back wuk() {
+        big up count
+        sen back count
+    }
+}
+
+mek next = counter()
+next()
+next()
+seh "Counter reach:", next()
+
+# functions as values
+mek double = wuk(x) { sen back x * 2 }
+wuk mapAll(list, f) {
+    mek out = []
+    fi x inna list {
+        pon(out, f(x))
+    }
+    sen back out
+}
+seh mapAll([1, 2, 3, 4], double)

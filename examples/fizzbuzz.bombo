@@ -1,0 +1,16 @@
+watch yah FizzBuzz, yard style:
+watch yah  divisible by 3  -> "Bombo"
+watch yah  divisible by 5  -> "Claat"
+watch yah  divisible by 15 -> "BOMBOCLAAT!"
+
+fi i from 1 tuh 20 {
+    bombo i % 15 == 0 {
+        seh "BOMBOCLAAT!"
+    } bomboclaat i % 3 == 0 {
+        seh "Bombo"
+    } bomboclaat i % 5 == 0 {
+        seh "Claat"
+    } bloodclaat {
+        seh i
+    }
+}

@@ -1,0 +1,32 @@
+# Try/catch: tek a chance ... if it bruk
+
+wuk divide(a, b) {
+    bombo b == 0 {
+        bruk "Yuh cyaan share wid nobody!"
+    }
+    sen back a / b
+}
+
+tek a chance {
+    seh "10 / 2 =", divide(10, 2)
+    seh "10 / 0 =", divide(10, 0)
+    seh "dis line never run"
+} if it bruk e {
+    seh "Bloodclaat, it bruk:", e
+}
+
+tek a chance {
+    seh ghost
+} if it bruk e {
+    seh "Caught:", e
+}
+
+# loops wid break
+mek n = 0
+gwaan yeh mon {
+    big up n
+    bombo n >= 5 {
+        rassclaat
+    }
+}
+seh "Stop at", n
