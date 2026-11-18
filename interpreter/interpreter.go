@@ -44,18 +44,38 @@ type Interpreter struct {
 	Globals *Env
 	Out     io.Writer
 	In      *bufio.Reader
-	depth   int
+	// Dir is the folder that `tek "file.bombo"` paths are relative to.
+	Dir string
+
+	builtins *Env
+	modules  map[string]Value
+	loading  map[string]bool
+	depth    int
 }
 
 func New(out io.Writer, in *bufio.Reader) *Interpreter {
-	it := &Interpreter{Globals: NewEnv(nil), Out: out, In: in}
+	it := &Interpreter{
+		Out:      out,
+		In:       in,
+		Dir:      ".",
+		builtins: NewEnv(nil),
+		modules:  map[string]Value{},
+		loading:  map[string]bool{},
+	}
+	it.Globals = NewEnv(it.builtins)
 	it.registerBuiltins()
 	return it
 }
 
-func (it *Interpreter) fail(line int, format string, args ...any) error {
+// Errorf makes a Bombo runtime error for the given line. Libraries written
+// in Go use it so their errors look like the rest of Bombo's.
+func Errorf(line int, format string, args ...any) error {
 	msg := fmt.Sprintf(format, args...)
 	return &BomboError{Line: line, Msg: msg, Value: msg}
+}
+
+func (it *Interpreter) fail(line int, format string, args ...any) error {
+	return Errorf(line, format, args...)
 }
 
 // Run executes a whole program.
@@ -296,6 +316,13 @@ func (it *Interpreter) exec(s ast.Stmt, env *Env) error {
 	case *ast.ExprStmt:
 		_, err := it.eval(s.X, env)
 		return err
+
+	case *ast.ImportStmt:
+		m, err := it.importModule(s.Path, s.Line())
+		if err != nil {
+			return err
+		}
+		env.Define(s.Name, m)
 
 	default:
 		return it.fail(s.Line(), "internal: unknown statement %T", s)
@@ -609,6 +636,12 @@ func (it *Interpreter) index(obj, idx Value, line int) (Value, error) {
 			return nil, err
 		}
 		return o.Vals[k], nil // missing key gives kakafaat
+	case Object:
+		name, ok := idx.(string)
+		if !ok {
+			return nil, it.fail(line, "Look inside a %s wid a name, like x.width", o.TypeName())
+		}
+		return o.Field(name), nil
 	}
 	return nil, it.fail(line, "Yuh cyaan look inside a %s wid [ ]", TypeName(obj))
 }

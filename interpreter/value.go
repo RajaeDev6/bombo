@@ -49,11 +49,24 @@ type Function struct {
 	Closure *Env
 }
 
-type builtinFn func(it *Interpreter, args []Value, line int) (Value, error)
+// BuiltinFunc is a function written in Go that Bombo code can call.
+type BuiltinFunc func(it *Interpreter, args []Value, line int) (Value, error)
+
+type builtinFn = BuiltinFunc
 
 type Builtin struct {
 	Name string
-	Fn   builtinFn
+	Fn   BuiltinFunc
+}
+
+func NewBuiltin(name string, fn BuiltinFunc) *Builtin { return &Builtin{Name: name, Fn: fn} }
+
+// Object is a value made by a Go library, like an image from the game
+// library. Bombo code can pass it around and read its fields with a dot.
+type Object interface {
+	TypeName() string        // what wahkind() says
+	String() string          // what seh shows
+	Field(name string) Value // obj.name; kakafaat if there is no such field
 }
 
 type Env struct {
@@ -124,6 +137,8 @@ func ToString(v Value) string {
 		return "<function " + v.Name + ">"
 	case *Builtin:
 		return "<built-in function " + v.Name + ">"
+	case Object:
+		return v.String()
 	}
 	return fmt.Sprintf("%v", v)
 }
@@ -137,7 +152,7 @@ func Repr(v Value) string {
 }
 
 func TypeName(v Value) string {
-	switch v.(type) {
+	switch v := v.(type) {
 	case nil:
 		return "kakafaat"
 	case bool:
@@ -152,6 +167,8 @@ func TypeName(v Value) string {
 		return "map"
 	case *Function, *Builtin:
 		return "function"
+	case Object:
+		return v.TypeName()
 	}
 	return "unknown"
 }

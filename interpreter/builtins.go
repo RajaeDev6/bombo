@@ -15,7 +15,7 @@ func (it *Interpreter) registerBuiltins() {
 	add := func(fn builtinFn, names ...string) {
 		b := &Builtin{Name: names[0], Fn: fn}
 		for _, n := range names {
-			it.Globals.Define(n, b)
+			it.builtins.Define(n, b)
 		}
 	}
 	add(bLen, "howmuch", "len")
@@ -41,6 +41,52 @@ func (it *Interpreter) registerBuiltins() {
 	add(mathFn("round", math.Round), "round")
 	add(mathFn("abs", math.Abs), "abs")
 	add(mathFn("sqrt", math.Sqrt), "sqrt")
+	add(mathFn("sin", math.Sin), "sin")
+	add(mathFn("cos", math.Cos), "cos")
+	add(mathFn("tan", math.Tan), "tan")
+	add(bAtan2, "atan2")
+	add(minMax("min", math.Min), "min")
+	add(minMax("max", math.Max), "max")
+	it.builtins.Define("pi", math.Pi)
+}
+
+func bAtan2(it *Interpreter, args []Value, line int) (Value, error) {
+	if err := it.arity("atan2", args, 2, line); err != nil {
+		return nil, err
+	}
+	y, ok1 := args[0].(float64)
+	x, ok2 := args[1].(float64)
+	if !ok1 || !ok2 {
+		return nil, it.fail(line, "'atan2' want two numba dem: atan2(y, x)")
+	}
+	return math.Atan2(y, x), nil
+}
+
+// min/max take numbers, min(3, 1, 2), or one list, min([3, 1, 2]).
+func minMax(name string, pick func(a, b float64) float64) builtinFn {
+	return func(it *Interpreter, args []Value, line int) (Value, error) {
+		if len(args) == 1 {
+			if l, ok := args[0].(*List); ok {
+				args = l.Elems
+			}
+		}
+		if len(args) == 0 {
+			return nil, it.fail(line, "'%s' want at least one numba", name)
+		}
+		var out float64
+		for i, a := range args {
+			n, ok := a.(float64)
+			if !ok {
+				return nil, it.wrongType(name, "numba", a, line)
+			}
+			if i == 0 {
+				out = n
+			} else {
+				out = pick(out, n)
+			}
+		}
+		return out, nil
+	}
 }
 
 func (it *Interpreter) arity(name string, args []Value, n, line int) error {

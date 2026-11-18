@@ -106,6 +106,12 @@ type IncStmt struct { // big up x / bun x
 	Delta  float64
 }
 
+type ImportStmt struct { // tek "game", tek "helpers.bombo" as h
+	Pos
+	Path string
+	Name string // the variable the module is stored in
+}
+
 type ExprStmt struct {
 	Pos
 	X Expr
@@ -128,6 +134,7 @@ func (*HelloStmt) stmt()    {}
 func (*TryStmt) stmt()      {}
 func (*ThrowStmt) stmt()    {}
 func (*IncStmt) stmt()      {}
+func (*ImportStmt) stmt()   {}
 func (*ExprStmt) stmt()     {}
 
 type NumberLit struct {

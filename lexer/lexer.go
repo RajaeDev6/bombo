@@ -42,6 +42,7 @@ const (
 	COMMA
 	COLON
 	SEMICOLON
+	DOT
 
 	LET      // mek
 	PRINT    // seh
@@ -71,6 +72,7 @@ const (
 	INCR     // big up
 	DECR     // bun
 	COMMENT  // watch yah
+	IMPORT   // tek
 )
 
 type Token struct {
@@ -90,6 +92,7 @@ var keywords = []phrase{
 	{[]string{"yeh", "mon"}, TRUE},
 	{[]string{"nah", "mon"}, FALSE},
 	{[]string{"tek", "a", "chance"}, TRY},
+	{[]string{"tek"}, IMPORT},
 	{[]string{"if", "it", "bruk"}, CATCH},
 	{[]string{"likkle", "more"}, EXIT},
 	{[]string{"wah", "gwaan"}, HELLO},
@@ -125,10 +128,16 @@ type Error struct {
 func (e *Error) Error() string { return fmt.Sprintf("Line %d: %s", e.Line, e.Msg) }
 
 type lexer struct {
-	src   []rune
-	pos   int
-	line  int
-	depth int // newlines inside ( ) and [ ] are ignored
+	src  []rune
+	pos  int
+	line int
+	// open brackets, innermost last. Newlines directly inside ( ) and [ ]
+	// are ignored, but inside { } (a block or map) they count again.
+	open []rune
+}
+
+func (l *lexer) ignoreNewlines() bool {
+	return len(l.open) > 0 && l.open[len(l.open)-1] != '{'
 }
 
 // Tokenize converts source into a slice of tokens ending with EOF.
@@ -141,7 +150,7 @@ func Tokenize(src string) ([]Token, error) {
 			return nil, err
 		}
 		if tok.Type == NEWLINE {
-			if l.depth > 0 || len(toks) == 0 || toks[len(toks)-1].Type == NEWLINE {
+			if l.ignoreNewlines() || len(toks) == 0 || toks[len(toks)-1].Type == NEWLINE {
 				continue
 			}
 		}
@@ -235,18 +244,18 @@ func (l *lexer) next() (Token, error) {
 	singles := map[rune]TokenType{
 		'+': PLUS, '-': MINUS, '*': STAR, '/': SLASH, '%': PERCENT, '=': ASSIGN,
 		'<': LT, '>': GT, '(': LPAREN, ')': RPAREN, '{': LBRACE, '}': RBRACE,
-		'[': LBRACKET, ']': RBRACKET, ',': COMMA, ':': COLON, ';': SEMICOLON,
+		'[': LBRACKET, ']': RBRACKET, ',': COMMA, ':': COLON, ';': SEMICOLON, '.': DOT,
 	}
 	t, ok := singles[c]
 	if !ok {
 		return Token{}, &Error{line, fmt.Sprintf("Wah dis? Mi nuh know dis character '%c'", c)}
 	}
 	switch t {
-	case LPAREN, LBRACKET:
-		l.depth++
-	case RPAREN, RBRACKET:
-		if l.depth > 0 {
-			l.depth--
+	case LPAREN, LBRACKET, LBRACE:
+		l.open = append(l.open, c)
+	case RPAREN, RBRACKET, RBRACE:
+		if len(l.open) > 0 {
+			l.open = l.open[:len(l.open)-1]
 		}
 	}
 	return Token{t, string(c), line}, nil

@@ -4,6 +4,8 @@ package parser
 import (
 	"fmt"
 	"strconv"
+	"strings"
+	"unicode"
 
 	"github.com/RajaeDev6/bombo/ast"
 	"github.com/RajaeDev6/bombo/lexer"
@@ -206,6 +208,20 @@ func (p *parser) statement() ast.Stmt {
 		p.endStmt()
 		return &ast.ThrowStmt{Pos: pos, Value: val}
 
+	case lexer.IMPORT:
+		p.advance()
+		path := p.expect(lexer.STRING, "a module name in quotes after 'tek', like tek \"game\"").Literal
+		name := moduleName(path)
+		if p.at(lexer.IDENT) && p.peek().Literal == "as" {
+			p.advance()
+			name = p.expect(lexer.IDENT, "a name after 'as'").Literal
+		}
+		if name == "" {
+			p.fail("Mi cyaan mek a name from '%s'. Add 'as' an a name: tek \"%s\" as stuff", path, path)
+		}
+		p.endStmt()
+		return &ast.ImportStmt{Pos: pos, Path: path, Name: name}
+
 	case lexer.INCR, lexer.DECR:
 		p.advance()
 		target := p.postfix()
@@ -230,6 +246,25 @@ func (p *parser) statement() ast.Stmt {
 	}
 	p.endStmt()
 	return &ast.ExprStmt{Pos: pos, X: x}
+}
+
+// moduleName turns "game" or "lib/space-ships.bombo" into a variable name
+// ("game", "space_ships").
+func moduleName(path string) string {
+	base := path[strings.LastIndexAny(path, "/\\")+1:]
+	base = strings.TrimSuffix(base, ".bombo")
+	var b strings.Builder
+	for i, r := range base {
+		switch {
+		case unicode.IsLetter(r) || r == '_' || (i > 0 && unicode.IsDigit(r)):
+			b.WriteRune(r)
+		case r == '-' || r == ' ':
+			b.WriteRune('_')
+		default:
+			return ""
+		}
+	}
+	return b.String()
 }
 
 func (p *parser) checkTarget(x ast.Expr) {
@@ -399,6 +434,11 @@ func (p *parser) postfix() ast.Expr {
 			idx := p.expression()
 			p.expect(lexer.RBRACKET, "']'")
 			x = &ast.Index{Pos: ast.At(t.Line), X: x, Idx: idx}
+		case lexer.DOT:
+			t := p.advance()
+			name := p.expect(lexer.IDENT, "a name after '.'")
+			key := &ast.StringLit{Pos: ast.At(name.Line), Value: name.Literal}
+			x = &ast.Index{Pos: ast.At(t.Line), X: x, Idx: key}
 		default:
 			return x
 		}
