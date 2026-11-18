@@ -1,0 +1,36 @@
+# Catch the falling stars. A small game using the game library.
+
+tek "game"
+
+game.window(480, 360, "Catch")
+
+mek x = 240
+mek star = {x: 240, y: 0}
+mek caught = 0
+
+wuk update(dt) {
+    bombo game.held("left") { x -= 300 * dt }
+    bombo game.held("right") { x += 300 * dt }
+    bombo game.tapped("escape") { game.quit() }
+    x = max(30, min(450, x))
+
+    star.y += 180 * dt
+    bombo star.y > 320 an abs(star.x - x) < 40 {
+        big up caught
+        star.y = 400
+    }
+    bombo star.y > 360 {
+        star.y = 0
+        star.x = luck(20, 460)
+    }
+}
+
+wuk draw() {
+    game.clear("#101025")
+    game.circle(star.x, star.y, 8, "gold")
+    game.rect(x - 30, 320, 60, 10, "cyan")
+    game.text("Caught: " + caught, 10, 10, 18, "white")
+}
+
+game.run(update, draw)
+seh "Yuh catch", caught, "star dem!"

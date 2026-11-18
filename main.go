@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
+	_ "github.com/RajaeDev6/bombo/game"
 	"github.com/RajaeDev6/bombo/interpreter"
 	"github.com/RajaeDev6/bombo/parser"
 )
@@ -47,6 +49,7 @@ func runFile(path string) int {
 		return 1
 	}
 	it := interpreter.New(os.Stdout, bufio.NewReader(os.Stdin))
+	it.Dir = filepath.Dir(path)
 	if err := it.Run(prog); err != nil && !errors.Is(err, interpreter.ErrExit) {
 		report(err)
 		return 1
@@ -172,6 +175,12 @@ ERRORS
     if it bruk e { ... }            catch (e holds the error)
     bruk "message"                  Raise an error
 
+MODULES
+    tek "game"                      Load the game library into 'game'
+    tek "helpers"                   Run helpers.bombo, store it in 'helpers'
+    tek "lib/x.bombo" as x          Load a file under another name
+    helpers.area(2, 3)              Use what a module defines
+
 TYPES AND LITERALS
     42   3.14                       Number
     "text"   'text'                 String
@@ -184,7 +193,7 @@ OPERATORS
     +  -  *  /  %                   Arithmetic (+ also joins strings and lists)
     ==  !=  <  <=  >  >=            Comparison
     an   or   nuh                   Logical and / or / not
-    xs[0]   m["key"]                Indexing
+    xs[0]   m["key"]   m.key        Indexing
 
 COMMENTS
     # comment
@@ -198,7 +207,7 @@ BUILT-IN FUNCTIONS
     wahkind(x)        type        Name of a value's type
     numba(x)          num         Convert to a number
     wud(x)            str         Convert to a string
-    luck(lo, hi)      random      Random integer between lo and hi
+    luck(lo, hi)      random      Random integer between lo and hi (luck() gives 0 to 1)
     dash(c, key)      remove      Remove a map key or list index; returns the value
     cool(ms)          sleep       Pause for ms milliseconds
     keys(map)                     List of a map's keys
@@ -208,5 +217,17 @@ BUILT-IN FUNCTIONS
     join(list, sep)               Join a list into a string
     upper(s)   lower(s)           Change string case
     floor  ceil  round  abs  sqrt Math functions
+    sin  cos  tan  atan2(y, x)  pi
+    min(a, b, ...)   max(...)     Smallest / biggest (also take a list)
     time()                        Current time in seconds
+
+GAMES
+    tek "game" gives you a window, images, shapes, text, keyboard,
+    sounds and saving. See the README for every function.
+
+    tek "game"
+    game.window(480, 360, "Mi Game")
+    wuk update(dt) { ... }          Called 60 times a second
+    wuk draw() { game.clear("black") ... }
+    game.run(update, draw)
 `
