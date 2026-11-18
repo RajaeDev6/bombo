@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"bombo/ast"
+	"github.com/RajaeDev6/bombo/ast"
 )
 
 // Value is any Bombo value: nil (kakafaat), bool, float64, string,

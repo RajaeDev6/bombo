@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"bombo/ast"
-	"bombo/lexer"
+	"github.com/RajaeDev6/bombo/ast"
+	"github.com/RajaeDev6/bombo/lexer"
 )
 
 // Error is a syntax error.

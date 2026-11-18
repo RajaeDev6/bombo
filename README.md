@@ -13,16 +13,26 @@ seh "Hello, world!"
 ### Requirements
 
 - [Go](https://go.dev/dl/) 1.22 or newer
-- Git
+- Git (only needed to build from source)
 
-### Get the source
+### Quick install
+
+```sh
+go install github.com/RajaeDev6/bombo@latest
+```
+
+This downloads, builds and installs `bombo` into `$(go env GOPATH)/bin` (usually `~/go/bin`). Make sure that folder is on your `PATH`, then run `bombo` from anywhere.
+
+### Or build from source
+
+#### Get the source
 
 ```sh
 git clone https://github.com/RajaeDev6/bombo.git
 cd bombo
 ```
 
-### Build
+#### Build
 
 ```sh
 go build -o bombo .
@@ -30,7 +40,7 @@ go build -o bombo .
 
 This creates a `bombo` executable (`bombo.exe` on Windows) in the current directory.
 
-### Install system-wide (optional)
+#### Install system-wide (optional)
 
 To run `bombo` from anywhere, move the binary somewhere on your `PATH`:
 

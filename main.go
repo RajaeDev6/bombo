@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"bombo/interpreter"
-	"bombo/parser"
+	"github.com/RajaeDev6/bombo/interpreter"
+	"github.com/RajaeDev6/bombo/parser"
 )
 
 const version = "1.0.0"

@@ -9,7 +9,7 @@ import (
 	"math"
 	"strings"
 
-	"bombo/ast"
+	"github.com/RajaeDev6/bombo/ast"
 )
 
 const maxDepth = 10000

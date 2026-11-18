@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"bombo/interpreter"
-	"bombo/parser"
+	"github.com/RajaeDev6/bombo/interpreter"
+	"github.com/RajaeDev6/bombo/parser"
 )
 
 func run(t *testing.T, src string) (string, error) {
